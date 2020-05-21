@@ -1,20 +1,19 @@
 const puppeteer=require('puppeteer');
-//const URL='https://exoplanetarchive.ipac.caltech.edu/cgi-bin/TblView/nph-tblView?app=ExoTbls&config=planets';
-//const URL="https://intoli.com/blog/scrape-infinite-scroll/demo.html";
+
 const URL='https://exoplanetarchive.ipac.caltech.edu/cgi-bin/nstedAPI/nph-nstedAPI?table=exoplanets&format=json';
 function extractItems(){
-    const extractedItems=Array.from(document.querySelectorAll("#icetable_icetbl_gridholder_1 div table tbody tr"));
+    const extractedItems=Array.from(document.querySelectorAll("pre"));
     //const extractedItems=Array.from(document.querySelectorAll("#boxes > div.box"))
     const items=extractedItems.map(ele=>ele.innerText);
     return items;
 }
 
-async function scrapeInfiniteScrollItems(page,extractItems,targetItemCount,delay=1000){
+async function scrapeInfiniteScrollItems(page,extractItems,delay=1000){
     let items=[];
     try{
         
         let previousHeight;
-        while(items.length<targetItemCount)
+        while(items)
         {
             items=await page.evaluate(extractItems);
             previousHeight=await page.evaluate("document.body.scrollHeight");
@@ -36,13 +35,13 @@ async function main(){
      page.setViewport({width:1280,height:1000});
      await page.goto(URL);
 
-     const targetItemCount=4154;
+    // const targetItemCount=4154;
 
     
      const items= await scrapeInfiniteScrollItems(
          page,
          extractItems,
-         targetItemCount
+        //targetItemCount
      );
 
      console.log(items);
